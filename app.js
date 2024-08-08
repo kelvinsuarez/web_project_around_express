@@ -9,6 +9,8 @@ useCreateIndex: true,
 useFindAndModify: false
 });
 
+app.use(express.json());
+
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 
