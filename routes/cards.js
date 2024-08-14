@@ -9,12 +9,12 @@ router.get('/', getCards);
 router.post('/', createCard);
 
 // Borrar targetas
-router.delete('/cards/:cardId', deleteCard);
+router.delete('/:cardId', deleteCard);
 
 // Dar like
-router.put('/cards/:cardId/likes', likeCard);
+router.put('/:cardId/likes', likeCard);
 
-// quitar like
-router.delete('/cards/:cardId/likes', dislikeCard);
+// Quitar like
+router.delete('/:cardId/likes', dislikeCard);
 
 module.exports =router;

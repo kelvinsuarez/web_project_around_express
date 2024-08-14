@@ -12,10 +12,10 @@ router.get ('/:id', getUserById);
 router.get ('/', getUsers);
 
 //Actualizar usuario
-router.patch('/users/me', updateUserProfile);
+router.patch('/me', updateUserProfile);
 
 //Actualizar avatar
-router.patch('/users/me/avatar', updateUserAvatar);
+router.patch('/me/avatar', updateUserAvatar);
 
 
 module.exports = router;
