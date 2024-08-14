@@ -1,20 +1,21 @@
 const Cards = require('../models/card');
+const {HttpStatus, HttpResponseMessage,} = require("../enums/http");
 
 module.exports.getCards = (req, res) => {
   Cards.find({})
   .populate(['user'])
   .then(cards => res.send({data: cards}))
-  .catch(err => res.status(500).send({message: 'Error predeterminado'}))
+  .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR}))
 };
 
 module.exports.createCard = (req, res) => {
   const {name, link, userId} = req.body;
   Cards.create({name, link, owner: userId})
-    .then(card => res.status(201).send({data: card}))
+    .then(card => res.status(HttpStatus.CREATED).send({data: card}))
     .catch(err => {
       if (err.name === 'ValidationError') {
-        res.status(400).send ({message: 'Datos invalidos'});
-      } else {res.status(500).send({message: 'Error del servidor'});
+        res.status(HttpStatus.CREATED).send ({message: HttpResponseMessage.BAD_REQUEST});
+      } else {res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR});
       }
     });
 };
@@ -22,16 +23,16 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId)
   .orFail(() => {
-    const error = new Error('Tarjeta no encontrada');
-    error.statusCode = 404;
+    const error = new Error(HttpResponseMessage.NOT_FOUND);
+    error.statusCode = HttpStatus.NOT_FOUND;
     throw error;
   })
   .then(card => res.send({message: 'Tarjeta eliminada'}))
   .catch(err =>  {
-    if (err.statusCode === 404){
-      res.status(404).send({message: 'Targena no encontrada'});
+    if (err.statusCode === HttpStatus.NOT_FOUND){
+      res.status(HttpStatus.NOT_FOUND).send({message: HttpResponseMessage.NOT_FOUND});
     } else {
-      res.status(500).send({message: 'Error predeterminado'});
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR});
     }
   });
 };

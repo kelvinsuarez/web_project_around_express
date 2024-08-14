@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const {PORT = 3000} = process.env;
 const app = express();
+const {HttpStatus, HttpResponseMessage,} = require("./enums/http");
+
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {});
 
@@ -21,7 +23,7 @@ app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
 
 app.use((req, res) => {
-  res.status(404).json({message:'Recurso no encontrado'})
+  res.status(HttpStatus.NOT_FOUND).json({message: HttpResponseMessage.NOT_FOUND})
 })
 
 app.listen(PORT, () => {

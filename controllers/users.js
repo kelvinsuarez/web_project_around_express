@@ -1,24 +1,25 @@
 const User = require('../models/user');
+const {HttpStatus, HttpResponseMessage,} = require("../enums/http");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
   .then(user => res.send({data: user}))
-  .catch(err => res.status(500).send({message: 'Error predeterminado.'}))
+  .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR}))
 }
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.id)
   .orFail(() => {
-    const error = new Error('No se ha encontrado ningun usuario con esa id');
-    error.statusCode = 404;
+    const error = new Error(HttpResponseMessage.NOT_FOUND);
+    error.statusCode = HttpStatus.NOT_FOUND;
     throw error;
   })
   .then(user => res.send({data: user}))
   .catch(err => {
-    if(err.statusCode === 404){
-      res.status(404).send({message: 'Usuario no encontrado'})
+    if(err.statusCode === HttpStatus.NOT_FOUND){
+      res.status(HttpStatus.NOT_FOUND).send({message: HttpResponseMessage.NOT_FOUND})
     } else {
-      res.status(500).send({message: 'Error predeterminado'})
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR})
     }
   });
 };
@@ -26,11 +27,11 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const {name, about, avatar} = req.body;
   User.create({name, about, avatar})
-    .then(user => res.status(201).send({data: user}))
+    .then(user => res.status(HttpStatus.CREATED).send({data: user}))
     .catch(err => {
       if (err.name === 'ValidationError') {
-        res.status(400).send ({message: 'Se pasaron datos inválidos a los métodos para crear un usuario/tarjeta o para actualizar el avatar/perfil de un usuario.'});
-      } else {res.status(500).send({message: 'Error predeterminado.'});
+        res.status(HttpStatus.BAD_REQUEST).send ({message: HttpResponseMessage.BAD_REQUEST});
+      } else {res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR});
       }
     });
 };
@@ -43,16 +44,16 @@ module.exports.updateUserProfile = (req, res) => {
     userId, {name, about}, {new: true, runValidators: true}
   )
   .orFail(() => {
-    const error = new Error('No se ha encontrado ningun usuario con esa id');
-    error.statusCode = 404;
+    const error = new Error(HttpResponseMessage.NOT_FOUND);
+    error.statusCode = HttpStatus.NOT_FOUND;
     throw error;
   })
   .then(user => res.send({data: user}))
   .catch(err => {
-    if(err.statusCode === 404){
-      res.status(404).send({message: 'Usuario no encontrado'})
+    if(err.statusCode === HttpStatus.NOT_FOUND){
+      res.status(HttpStatus.NOT_FOUND).send({message: HttpResponseMessage.NOT_FOUND})
     } else {
-      res.status(500).send({message: 'Error predeterminado'})
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR})
     }
   });
 };
@@ -65,16 +66,16 @@ module.exports.updateUserAvatar = (req, res) => {
     userId, {avatar}, {new: true, runValidators: true}
   )
   .orFail(() => {
-    const error = new Error('No se ha encontrado ningun usuario con esa id');
-    error.statusCode = 404;
+    const error = new Error(HttpResponseMessage.NOT_FOUND);
+    error.statusCode = HttpStatus.NOT_FOUND;
     throw error;
   })
   .then(user => res.send({data: user}))
   .catch(err => {
-    if(err.statusCode === 404){
-      res.status(404).send({message: 'Usuario no encontrado'})
+    if(err.statusCode === HttpStatus.NOT_FOUND){
+      res.status(HttpStatus.NOT_FOUND).send({message: HttpResponseMessage.NOT_FOUND})
     } else {
-      res.status(500).send({message: 'Error predeterminado'})
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR})
     }
   });
 };
