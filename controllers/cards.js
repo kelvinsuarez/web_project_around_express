@@ -3,7 +3,7 @@ const {HttpStatus, HttpResponseMessage,} = require("../enums/http");
 
 module.exports.getCards = (req, res) => {
   Cards.find({})
-  .populate(['user'])
+  .populate(['owner'])
   .then(cards => res.send({data: cards}))
   .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({message: HttpResponseMessage.SERVER_ERROR}))
 };
